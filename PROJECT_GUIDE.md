@@ -817,6 +817,27 @@ docker compose exec api uv run alembic upgrade head
 docker compose exec api uv run python -m scripts.create_first_superuser
 ```
 
+#### 6. Applying Code Changes (Docker)
+
+When you make changes to your code, here's what to do to apply them:
+
+**1. Code changes in `src/app/` — already volume-mounted, just restart:**
+```bash
+docker compose restart web worker
+```
+
+**2. Changes to `.env` — same:**
+```bash
+docker compose restart web worker
+```
+
+**3. Changes to dependencies (`pyproject.toml`) — need rebuild:**
+```bash
+docker compose up -d --build web worker
+```
+
+**Note:** No `docker compose down` needed for routine changes. Volume mounts ensure code changes are reflected immediately with just a restart.
+
 ---
 
 ### Option 3: PM2 Process Manager
