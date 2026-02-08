@@ -130,3 +130,20 @@ for logger_name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
     logger.handlers.clear()
     logger.propagate = True
     logger.setLevel(logging.INFO)
+
+# Data aggregator logger - separate file for data operations
+data_aggregator_handler = RotatingFileHandler(
+    filename=os.path.join(LOG_DIR, "data_aggregator.log"),
+    maxBytes=settings.FILE_LOG_MAX_BYTES,
+    backupCount=settings.FILE_LOG_BACKUP_COUNT,
+)
+data_aggregator_handler.setLevel(logging.DEBUG)
+data_aggregator_handler.setFormatter(
+    build_formatter(
+        json_output=settings.FILE_LOG_FORMAT_JSON, pre_chain=SHARED_PROCESSORS + [file_log_filter_processors]
+    )
+)
+
+data_aggregator_logger = logging.getLogger("data_aggregator")
+data_aggregator_logger.addHandler(data_aggregator_handler)
+data_aggregator_logger.setLevel(logging.DEBUG)
