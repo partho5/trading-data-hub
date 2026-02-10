@@ -4,9 +4,32 @@
 
 Create an automated bot that fetches market data from the Trading Data Hub API and posts formatted updates to X (Twitter) and Discord servers. Charts must be included when available to maximize engagement.
 
+# Development Rules
+
+## Core Principles
+1. **Simplicity First**: No over-engineering, straightforward step-by-step workflow. **Modular design, obey SRP rules**.
+2. **Production Ready**: One-command restart using `uv` or Docker
+3. **Developer Friendly**: Clear README with workflow, features, and modification guide
+4. **Rate Limit Safe**: Track X posting count, enforce strict limits
+5. **Configurable**: All adjustable values in config/env variables, zero hardcoding
+
+## Tech Stack
+- Python with `uv` for dependency management
+- Environment variables for all configs (API keys, intervals, limits)
+- Simple JSON/SQLite for tracking post history
+- Systemd service or Docker container for deployment
+
+## Key Requirements
+- X rate limit tracker with hard stops
+- Chart inclusion when available
+- Simple restart: `systemctl restart bot` or `docker compose restart`
+- README sections: Setup, Architecture, Adding Features, Removing Features
+
+
 ## Available API Endpoints
 
 Base URL: `http://localhost:8000/api/v1/data`
+Base URL in Production: `https://trading-data-hub.nanybot.com/api/v1/data`
 
 ### Authentication
 ```
@@ -313,12 +336,12 @@ Chart: [All 11 sectors ranked]
 
 ### X (Twitter)
 
-**OAuth 1.0a or OAuth 2.0 with write permissions**
+**OAuth 1.0a or OAuth 2.0 that applies, with write permissions**
 
-- Post tweets with text + 1 image
+- Post tweets with text + 1 image (optional)
 - Handle 280 character limit (truncate gracefully)
 - Use Twitter Cards for better chart previews
-- Rate limit: 300 tweets/3 hours (app-level)
+- Rate limit: max 15/24 hours, use proxy for api request to avoid 429 error which is not only per account, but also per ip.
 
 ### Discord
 
@@ -339,4 +362,3 @@ Chart: [All 11 sectors ranked]
 - Posting to additional platforms (Telegram, Slack, etc.)
 - Customizing post templates per endpoint
 - A/B testing different message formats
-- User-triggered posts (Discord commands like `!fear-greed`)

@@ -5,26 +5,23 @@ from typing import Any
 
 from ..base import BaseDataSource
 from .. import register_source
-from .handlers import news, ratings, earnings, dividends, splits, ipos
+from .handlers import news, ratings, earnings
 
 logger = logging.getLogger("data_aggregator")
 
 
 @register_source
 class BenzingaSource(BaseDataSource):
-    """Benzinga data source - news, ratings, earnings, dividends, splits, and IPOs."""
+    """Benzinga data source - news, ratings, and earnings."""
 
     name = "benzinga"
-    supported_data_types = ["news", "ratings", "earnings", "dividends", "splits", "ipos"]
+    supported_data_types = ["news", "ratings", "earnings"]
 
     def __init__(self):
         self._handlers = {
             "news": news.fetch_news,
             "ratings": ratings.fetch_ratings,
             "earnings": earnings.fetch_earnings,
-            "dividends": dividends.fetch_dividends,
-            "splits": splits.fetch_splits,
-            "ipos": ipos.fetch_ipos,
         }
 
     async def fetch(

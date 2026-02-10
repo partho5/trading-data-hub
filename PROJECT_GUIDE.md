@@ -383,7 +383,7 @@ GET /api/v1/data/{source}/{data_type}?ticker={ticker}&params={json_params}
 | `yahoo_finance` | `quote`, `chart`, `extended`, `earnings`, `stats`, `ratings` | Stock data from Yahoo Finance |
 | `finviz` | `gainers`, `losers`, `unusual_volume`, `insider` | Market screener data from Finviz |
 | `alpha_vantage` | `vix`, `economic_calendar`, `sector_performance` | Market indicators and economic data |
-| `benzinga` | `news`, `ratings`, `earnings`, `dividends`, `splits`, `ipos` | Breaking news, analyst ratings, earnings, dividends, stock splits, and IPO calendar from Benzinga |
+| `benzinga` | `news`, `ratings`, `earnings` | Breaking news, analyst ratings, and earnings calendar from Benzinga |
 
 ### Yahoo Finance Data Types
 
@@ -420,9 +420,6 @@ GET /api/v1/data/{source}/{data_type}?ticker={ticker}&params={json_params}
 | `news` | Breaking news & press releases | title, teaser, body, url, image, published, author, stocks, tags |
 | `ratings` | Analyst upgrades/downgrades | analyst, analyst_firm, action, rating_current, rating_prior, price_target_current, price_target_prior |
 | `earnings` | Upcoming earnings calendar | date, time, company, period, eps_estimate, eps_actual, revenue_estimate, revenue_actual, importance |
-| `dividends` | Dividend announcements | date, company, dividend, dividend_prior, dividend_yield, ex_dividend_date, payable_date, frequency |
-| `splits` | Stock split announcements | date, company, ratio, type (Forward/Reverse), optionable, importance |
-| `ipos` | IPO calendar | date, company, price, price_min, price_max, deal_status, offering_value, offering_shares, lead_underwriters |
 
 ### Usage Examples
 
@@ -531,30 +528,6 @@ curl "http://localhost:8000/api/v1/data/benzinga/earnings?ticker=AAPL" \
 # Get all earnings for next 30 days
 curl "http://localhost:8000/api/v1/data/benzinga/earnings?ticker=all&date_from=2026-02-10&date_to=2026-03-10&limit=100" \
   -H "Authorization: Bearer <token>"
-
-# Get dividend announcements (next 30 days)
-curl "http://localhost:8000/api/v1/data/benzinga/dividends?ticker=AAPL" \
-  -H "Authorization: Bearer <token>"
-
-# Get all dividend announcements
-curl "http://localhost:8000/api/v1/data/benzinga/dividends?ticker=all&limit=50" \
-  -H "Authorization: Bearer <token>"
-
-# Get stock splits (next 60 days)
-curl "http://localhost:8000/api/v1/data/benzinga/splits?ticker=TSLA" \
-  -H "Authorization: Bearer <token>"
-
-# Get all upcoming splits
-curl "http://localhost:8000/api/v1/data/benzinga/splits?ticker=all&limit=20" \
-  -H "Authorization: Bearer <token>"
-
-# Get IPO calendar (next 90 days)
-curl "http://localhost:8000/api/v1/data/benzinga/ipos?ticker=all&limit=50" \
-  -H "Authorization: Bearer <token>"
-
-# Get specific IPO details
-curl "http://localhost:8000/api/v1/data/benzinga/ipos?ticker=ABNB" \
-  -H "Authorization: Bearer <token>"
 ```
 
 ### Response Format
@@ -614,10 +587,7 @@ src/app/
 │       └── handlers/
 │           ├── news.py      # Breaking news
 │           ├── ratings.py   # Analyst ratings
-│           ├── earnings.py  # Earnings calendar
-│           ├── dividends.py # Dividend announcements
-│           ├── splits.py    # Stock splits
-│           └── ipos.py      # IPO calendar
+│           └── earnings.py  # Earnings calendar
 ├── services/
 │   ├── http_client.py       # HTTP with retry logic
 │   ├── proxy_manager.py     # Rotating proxy support
