@@ -62,9 +62,12 @@ async def fetch_earnings(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
         response = await client.get(BENZINGA_EARNINGS_URL, headers=headers, params=query_params)
         data = response.json()
 
+        # API returns list directly or dict with "earnings" key
+        items = data if isinstance(data, list) else data.get("earnings", [])
+
         # Transform response to normalized format
         earnings = []
-        for item in data.get("earnings", []):
+        for item in items:
             earnings.append({
                 "id": item.get("id"),
                 "date": item.get("date"),

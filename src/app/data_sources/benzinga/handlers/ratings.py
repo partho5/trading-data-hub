@@ -61,9 +61,12 @@ async def fetch_ratings(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
         response = await client.get(BENZINGA_RATINGS_URL, headers=headers, params=query_params)
         data = response.json()
 
+        # API returns list directly or dict with "ratings" key
+        items = data if isinstance(data, list) else data.get("ratings", [])
+
         # Transform response to normalized format
         ratings = []
-        for item in data.get("ratings", []):
+        for item in items:
             ratings.append({
                 "id": item.get("id"),
                 "date": item.get("date"),
