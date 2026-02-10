@@ -29,6 +29,7 @@ class BenzingaSource(BaseDataSource):
         data_type: str,
         ticker: str | list[str],
         params: dict[str, Any] | None = None,
+        request=None,
     ) -> dict[str, Any]:
         """Fetch data from Benzinga."""
 

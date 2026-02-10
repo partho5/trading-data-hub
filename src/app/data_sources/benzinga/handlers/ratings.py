@@ -33,6 +33,10 @@ async def fetch_ratings(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
 
     client = HttpClient(use_proxy=False)
 
+    headers = {
+        "Accept": "application/json",
+    }
+
     query_params = {
         "token": api_key,
         "pageSize": params.get("limit", 20),
@@ -54,7 +58,7 @@ async def fetch_ratings(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
         query_params["parameters[action]"] = params["action"]
 
     try:
-        response = await client.get(BENZINGA_RATINGS_URL, params=query_params)
+        response = await client.get(BENZINGA_RATINGS_URL, headers=headers, params=query_params)
         data = response.json()
 
         # Transform response to normalized format

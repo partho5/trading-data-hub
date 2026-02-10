@@ -32,6 +32,10 @@ async def fetch_news(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
 
     client = HttpClient(use_proxy=False)
 
+    headers = {
+        "Accept": "application/json",
+    }
+
     query_params = {
         "token": api_key,
         "displayOutput": "full",
@@ -50,7 +54,7 @@ async def fetch_news(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
         query_params["dateTo"] = params["date_to"]
 
     try:
-        response = await client.get(BENZINGA_NEWS_URL, params=query_params)
+        response = await client.get(BENZINGA_NEWS_URL, headers=headers, params=query_params)
         data = response.json()
 
         # Transform response to normalized format

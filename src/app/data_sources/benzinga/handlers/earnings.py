@@ -34,6 +34,10 @@ async def fetch_earnings(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
 
     client = HttpClient(use_proxy=False)
 
+    headers = {
+        "Accept": "application/json",
+    }
+
     # Default date range: today to 7 days from now
     today = datetime.now().strftime("%Y-%m-%d")
     week_later = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
@@ -55,7 +59,7 @@ async def fetch_earnings(ticker: str, params: dict[str, Any]) -> dict[str, Any]:
         query_params["parameters[importance]"] = params["importance"]
 
     try:
-        response = await client.get(BENZINGA_EARNINGS_URL, params=query_params)
+        response = await client.get(BENZINGA_EARNINGS_URL, headers=headers, params=query_params)
         data = response.json()
 
         # Transform response to normalized format
