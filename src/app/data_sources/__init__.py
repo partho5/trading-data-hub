@@ -45,3 +45,4 @@ from . import alpha_vantage  # noqa: E402, F401
 from . import cnn_sentiment  # noqa: E402, F401
 from . import sec_edgar  # noqa: E402, F401
 from . import reddit  # noqa: E402, F401
+from . import benzinga  # noqa: E402, F401
