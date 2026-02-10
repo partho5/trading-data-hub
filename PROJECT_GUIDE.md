@@ -383,6 +383,7 @@ GET /api/v1/data/{source}/{data_type}?ticker={ticker}&params={json_params}
 | `yahoo_finance` | `quote`, `chart`, `extended`, `earnings`, `stats`, `ratings` | Stock data from Yahoo Finance |
 | `finviz` | `gainers`, `losers`, `unusual_volume`, `insider` | Market screener data from Finviz |
 | `alpha_vantage` | `vix`, `economic_calendar`, `sector_performance` | Market indicators and economic data |
+| `benzinga` | `news`, `ratings`, `earnings` | Breaking news, analyst ratings, and earnings calendar from Benzinga |
 
 ### Yahoo Finance Data Types
 
@@ -411,6 +412,14 @@ GET /api/v1/data/{source}/{data_type}?ticker={ticker}&params={json_params}
 | `vix` | VIX Fear Index | current, change, sentiment (Extreme Fear to Complacency) |
 | `economic_calendar` | Upcoming economic events | date, event, country, impact, estimate |
 | `sector_performance` | Sector ETF performance | sectors with change %, leaders, laggards |
+
+### Benzinga Data Types
+
+| Data Type | Description | Key Fields |
+|-----------|-------------|------------|
+| `news` | Breaking news & press releases | title, teaser, body, url, image, published, author, stocks, tags |
+| `ratings` | Analyst upgrades/downgrades | analyst, analyst_firm, action, rating_current, rating_prior, price_target_current, price_target_prior |
+| `earnings` | Upcoming earnings calendar | date, time, company, period, eps_estimate, eps_actual, revenue_estimate, revenue_actual, importance |
 
 ### Usage Examples
 
@@ -493,6 +502,32 @@ curl "http://localhost:8000/api/v1/data/alpha_vantage/economic_calendar?ticker=a
 # Sector ETF performance
 curl "http://localhost:8000/api/v1/data/alpha_vantage/sector_performance?ticker=all" \
   -H "Authorization: Bearer <token>"
+
+# --- Benzinga ---
+
+# Get breaking news for a ticker
+curl "http://localhost:8000/api/v1/data/benzinga/news?ticker=AAPL&limit=10" \
+  -H "Authorization: Bearer <token>"
+
+# Get all market news
+curl "http://localhost:8000/api/v1/data/benzinga/news?ticker=all&limit=20" \
+  -H "Authorization: Bearer <token>"
+
+# Get analyst ratings (upgrades/downgrades)
+curl "http://localhost:8000/api/v1/data/benzinga/ratings?ticker=AAPL&limit=10" \
+  -H "Authorization: Bearer <token>"
+
+# Filter ratings by action (Upgrades only)
+curl "http://localhost:8000/api/v1/data/benzinga/ratings?ticker=all&action=Upgrades&limit=20" \
+  -H "Authorization: Bearer <token>"
+
+# Get upcoming earnings calendar (next 7 days)
+curl "http://localhost:8000/api/v1/data/benzinga/earnings?ticker=AAPL" \
+  -H "Authorization: Bearer <token>"
+
+# Get all earnings for next 30 days
+curl "http://localhost:8000/api/v1/data/benzinga/earnings?ticker=all&date_from=2026-02-10&date_to=2026-03-10&limit=100" \
+  -H "Authorization: Bearer <token>"
 ```
 
 ### Response Format
@@ -541,12 +576,18 @@ src/app/
 │   │       ├── losers.py    # Top losers
 │   │       ├── unusual_volume.py  # Unusual volume
 │   │       └── insider.py   # Insider trading
-│   └── alpha_vantage/       # Alpha Vantage / FMP
+│   ├── alpha_vantage/       # Alpha Vantage / FMP
+│   │   ├── source.py
+│   │   └── handlers/
+│   │       ├── vix.py       # VIX Fear Index
+│   │       ├── economic_calendar.py  # Economic events
+│   │       └── sector_performance.py # Sector ETFs
+│   └── benzinga/            # Benzinga
 │       ├── source.py
 │       └── handlers/
-│           ├── vix.py       # VIX Fear Index
-│           ├── economic_calendar.py  # Economic events
-│           └── sector_performance.py # Sector ETFs
+│           ├── news.py      # Breaking news
+│           ├── ratings.py   # Analyst ratings
+│           └── earnings.py  # Earnings calendar
 ├── services/
 │   ├── http_client.py       # HTTP with retry logic
 │   ├── proxy_manager.py     # Rotating proxy support
@@ -568,11 +609,15 @@ ALPHA_VANTAGE_API_KEY=your_api_key_here
 
 # Financial Modeling Prep API key (free tier: 250 calls/day)
 FMP_API_KEY=your_api_key_here
+
+# Benzinga API key (PRO/ESSENTIAL tier)
+BENZINGA_API_KEY=bz.your_api_key_here
 ```
 
-**Get free API keys:**
+**Get API keys:**
 - Alpha Vantage: https://www.alphavantage.co/support/#api-key
 - FMP: https://financialmodelingprep.com/developer/docs/
+- Benzinga: https://www.benzinga.com/apis/
 
 ### Caching
 
@@ -721,7 +766,7 @@ sudo systemctl disable trading-api
 
 ---
 
-### Option 2: Docker Compose (Containerized)
+### Option 2: Docker Compose (Containerized) 👈 This has been used to deploy
 
 **Use when:** You want isolated, portable deployment
 
